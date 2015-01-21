@@ -1,5 +1,10 @@
-<#import "../layout/defaultLayout.ftl.html" as layout> 
-<@layout.myLayout "Home page">    
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
 
     <a href="/multiplayer">Multiplayer</a>
     <a href="/history">History</a>
@@ -7,10 +12,24 @@
 <h1>Poker web app</h1>
     <h2> ${name}</h2>
     <h2>${register}</h2>
-<p>${i18n("hello.world.json")}</p>
-<a href="/hello_world.json">Hello World Json</a>
+
+    <div align="center">
+        <img src="/assets/images/PlayingCards/${card1}.png" height="250" width="150" id="card1" style="position:relative;" />
+        <img src="/assets/images/PlayingCards/${card2}.png" height="250" width="150" id="card2" style="position:relative;" />
+        <img src="/assets/images/PlayingCards/${card3}.png" height="250" width="150" id="card3" style="position:relative;" />
+        <img src="/assets/images/PlayingCards/${card4}.png" height="250" width="150" id="card4" style="position:relative;" />
+        <img src="/assets/images/PlayingCards/${card5}.png" height="250" width="150" id="card5" style="position:relative;" />
+    </div>
+
     <br><br><br>
     <a href="/logout"> Log out seun</a>
-   <!-- <a href="/login.ftl.html"/> WERk</a>-->
 
-</@layout.myLayout>
+    <script type="text/javascript" src="/assets/webjars/jquery/2.1.1/jquery.js"></script>
+    <script type="text/javascript" src="/assets/js/script.js" ></script>
+
+</body>
+</html>
+
+</body>
+</html>
+

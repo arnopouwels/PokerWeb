@@ -7,6 +7,7 @@ create table User (
 
 create table Game (
     gameName varchar(100) not null,
+    dateOfGame TIMESTAMP,
     primary key (gameName)
 );
 
@@ -15,7 +16,7 @@ create table UserGame (
     gameName varchar(100) not null,
     hand varchar(100) not null,
     constraint username_fk foreign key (username) references User(username),
-    constraint gameName_fk foreign key (gameName) references Game(gameName)
+    constraint gameName_fk foreign key (gameName) references Game(gameName),
     primary key (username, gameName)
 );
 

@@ -16,6 +16,7 @@
 
 package controllers;
 
+import Users.Game;
 import Users.User;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
@@ -31,9 +32,11 @@ import services.RegisterService;
 import services.loginService;
 
 import java.lang.Object;
+import java.util.Date;
 import javax.swing.Popup;
 
 import ninja.Context;
+import services.multiplayerService;
 
 import javax.swing.*;
 
@@ -42,11 +45,15 @@ import javax.swing.*;
 public class ApplicationController {
 
     @Inject private PokerService pokerService;
-   @Inject private RegisterService registerService;
+    @Inject private RegisterService registerService;
     @Inject private loginService _loginService;
     @Inject private Session session;
+    @Inject private multiplayerService _multiplayerService;
 
     public Result multiplayer() {
+
+        _multiplayerService.gameStore(new Game("NuweGame", new Date()));
+
         Result result = Results.html();
         pokerService.createDeck();
         result.render("one", pokerService.test())
@@ -104,6 +111,11 @@ public class ApplicationController {
 
         result.render("register", "Hello " + context.getSession().get("username"));
         result.render("name", pokerService.test());
+        result.render("card1", pokerService.getImage(pokerService.getHandList().get(0)));
+        result.render("card2", pokerService.getImage(pokerService.getHandList().get(1)));
+        result.render("card3", pokerService.getImage(pokerService.getHandList().get(2)));
+        result.render("card4", pokerService.getImage(pokerService.getHandList().get(3)));
+        result.render("card5", pokerService.getImage(pokerService.getHandList().get(4)));
         return result;
 
     }

@@ -83,6 +83,177 @@ public class PokerService
         return newHand.toString() + " " + evaluate(newHand);
     }
 
+    public String getImage(Card card) {
+
+        if (card.toString().compareTo("A♣") == 0) {
+            return "ace_of_clubs";
+        }
+        if (card.toString().compareTo("2♣") == 0) {
+            return "2_of_clubs";
+        }
+        if (card.toString().compareTo("3♣") == 0) {
+            return "3_of_clubs";
+        }
+        if (card.toString().compareTo("4♣") == 0) {
+            return "4_of_clubs";
+        }
+        if (card.toString().compareTo("5♣") == 0) {
+            return "5_of_clubs";
+        }
+        if (card.toString().compareTo("6♣") == 0) {
+            return "6_of_clubs";
+        }
+        if (card.toString().compareTo("7♣") == 0) {
+            return "7_of_clubs";
+        }
+        if (card.toString().compareTo("8♣") == 0) {
+            return "8_of_clubs";
+        }
+        if (card.toString().compareTo("9♣") == 0) {
+            return "9_of_clubs";
+        }
+        if (card.toString().compareTo("10♣") == 0) {
+            return "10_of_clubs";
+        }
+        if (card.toString().compareTo("J♣") == 0) {
+            return "jack_of_clubs2";
+        }
+        if (card.toString().compareTo("Q♣") == 0) {
+            return "queen_of_clubs2";
+        }
+        if (card.toString().compareTo("K♣") == 0) {
+            return "king_of_clubs2";
+        }
+
+
+        if (card.toString().compareTo("A♦") == 0) {
+            return "ace_of_diamonds";
+        }
+        if (card.toString().compareTo("2♦") == 0) {
+            return "2_of_diamonds";
+        }
+        if (card.toString().compareTo("3♦") == 0) {
+            return "3_of_diamonds";
+        }
+        if (card.toString().compareTo("4♦") == 0) {
+            return "4_of_diamonds";
+        }
+        if (card.toString().compareTo("5♦") == 0) {
+            return "5_of_diamonds";
+        }
+        if (card.toString().compareTo("6♦") == 0) {
+            return "6_of_diamonds";
+        }
+        if (card.toString().compareTo("7♦") == 0) {
+            return "7_of_diamonds";
+        }
+        if (card.toString().compareTo("8♦") == 0) {
+            return "8_of_diamonds";
+        }
+        if (card.toString().compareTo("9♦") == 0) {
+            return "9_of_diamonds";
+        }
+        if (card.toString().compareTo("10♦") == 0) {
+            return "10_of_diamonds";
+        }
+        if (card.toString().compareTo("J♦") == 0) {
+            return "jack_of_diamonds2";
+        }
+        if (card.toString().compareTo("Q♦") == 0) {
+            return "queen_of_diamonds2";
+        }
+        if (card.toString().compareTo("K♦") == 0) {
+            return "king_of_diamonds2";
+        }
+
+        if (card.toString().compareTo("A♥") == 0) {
+            return "ace_of_hearts";
+        }
+        if (card.toString().compareTo("2♥") == 0) {
+            return "2_of_hearts";
+        }
+        if (card.toString().compareTo("3♥") == 0) {
+            return "3_of_hearts";
+        }
+        if (card.toString().compareTo("4♥") == 0) {
+            return "4_of_hearts";
+        }
+        if (card.toString().compareTo("5♥") == 0) {
+            return "5_of_hearts";
+        }
+        if (card.toString().compareTo("6♥") == 0) {
+            return "6_of_hearts";
+        }
+        if (card.toString().compareTo("7♥") == 0) {
+            return "7_of_hearts";
+        }
+        if (card.toString().compareTo("8♥") == 0) {
+            return "8_of_hearts";
+        }
+        if (card.toString().compareTo("9♥") == 0) {
+            return "9_of_hearts";
+        }
+        if (card.toString().compareTo("10♥") == 0) {
+            return "10_of_hearts";
+        }
+        if (card.toString().compareTo("J♥") == 0) {
+            return "jack_of_hearts2";
+        }
+        if (card.toString().compareTo("Q♥") == 0) {
+            return "queen_of_hearts2";
+        }
+        if (card.toString().compareTo("K♥") == 0) {
+            return "king_of_hearts2";
+        }
+
+
+        if (card.toString().compareTo("A♠") == 0) {
+            return "ace_of_spades";
+        }
+        if (card.toString().compareTo("2♠") == 0) {
+            return "2_of_spades";
+        }
+        if (card.toString().compareTo("3♠") == 0) {
+            return "3_of_spades";
+        }
+        if (card.toString().compareTo("4♠") == 0) {
+            return "4_of_spades";
+        }
+        if (card.toString().compareTo("5♠") == 0) {
+            return "5_of_spades";
+        }
+        if (card.toString().compareTo("6♠") == 0) {
+            return "6_of_spades";
+        }
+        if (card.toString().compareTo("7♠") == 0) {
+            return "7_of_spades";
+        }
+        if (card.toString().compareTo("8♠") == 0) {
+            return "8_of_spades";
+        }
+        if (card.toString().compareTo("9♠") == 0) {
+            return "9_of_spades";
+        }
+        if (card.toString().compareTo("10♠") == 0) {
+            return "10_of_spades";
+        }
+        if (card.toString().compareTo("J♠") == 0) {
+            return "jack_of_spades2";
+        }
+        if (card.toString().compareTo("Q♠") == 0) {
+            return "queen_of_spades2";
+        }
+        if (card.toString().compareTo("K♠") == 0) {
+            return "king_of_spades2";
+        }
+
+        return "";
+    }
+
+    public List<Card> getHandList() {
+        return hand;
+    }
+
     public String evaluate(Hand hand)
     {
         if (HandEvaluator.isFlush(hand))
