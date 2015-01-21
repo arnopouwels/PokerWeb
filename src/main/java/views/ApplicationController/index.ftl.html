@@ -1,0 +1,16 @@
+<#import "../layout/defaultLayout.ftl.html" as layout> 
+<@layout.myLayout "Home page">    
+
+    <a href="/multiplayer">Multiplayer</a>
+    <a href="/history">History</a>
+
+<h1>Poker web app</h1>
+    <h2> ${name}</h2>
+    <h2>${register}</h2>
+<p>${i18n("hello.world.json")}</p>
+<a href="/hello_world.json">Hello World Json</a>
+    <br><br><br>
+    <a href="/logout"> Log out seun</a>
+   <!-- <a href="/login.ftl.html"/> WERk</a>-->
+
+</@layout.myLayout>
