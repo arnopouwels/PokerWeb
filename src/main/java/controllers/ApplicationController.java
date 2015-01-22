@@ -18,6 +18,7 @@ package controllers;
 
 import Users.Game;
 import Users.User;
+import Users.UserGame;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import ninja.Result;
@@ -27,16 +28,13 @@ import ninja.session.Session;
 
 import com.google.inject.Singleton;
 import org.eclipse.jetty.security.LoginService;
-import services.PokerService;
-import services.RegisterService;
-import services.loginService;
+import services.*;
 
 import java.lang.Object;
 import java.util.Date;
 import javax.swing.Popup;
 
 import ninja.Context;
-import services.multiplayerService;
 
 import javax.swing.*;
 
@@ -49,10 +47,29 @@ public class ApplicationController {
     @Inject private loginService _loginService;
     @Inject private Session session;
     @Inject private multiplayerService _multiplayerService;
+    @Inject private userGameService _userGameService;
 
     public Result multiplayer() {
 
-        _multiplayerService.gameStore(new Game("NuweGame", new Date()));
+
+        User user = new User();
+        user.setUsername("ssssss");
+        user.setPassword("aaaaaa");
+        Game service = new Game();
+        service.setDateOfGame(new Date());
+        service.setGameName("Lekker");
+        UserGame userService = new UserGame();
+        userService.setUsername(user.getUsername());
+        userService.setGameName(service.getGameName());
+        userService.setHand(pokerService.test());
+        user.addGame(service);
+        userService.setU(user);
+        service.addUser(user);
+        userService.setG(service);
+
+        registerService.userStore(user);
+        _multiplayerService.gameStore(service);
+        _userGameService.userGameStore(userService);
 
         Result result = Results.html();
         pokerService.createDeck();

@@ -19,10 +19,7 @@ package conf;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import org.eclipse.jetty.security.LoginService;
-import services.PokerService;
-import services.RegisterService;
-import services.loginService;
-import services.multiplayerService;
+import services.*;
 
 import javax.mail.Session;
 
@@ -38,6 +35,7 @@ public class Module extends AbstractModule {
         bind(loginService.class);
         bind(multiplayerService.class);
         bind(ninja.session.Session.class);
+        bind(userGameService.class);
     }
 
 }

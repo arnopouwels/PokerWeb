@@ -1,12 +1,11 @@
 package Users;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.security.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Dihan on 1/20/2015.
@@ -21,6 +20,18 @@ public class Game {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateOfGame;
+
+    @OneToMany(mappedBy = "g")
+    private List<UserGame> users = new ArrayList<>();
+
+    public void addUser(User _user) {
+        UserGame userGame = new UserGame();
+        userGame.setUsername(_user.getUsername());
+        userGame.setGameName(this.gameName);
+        userGame.setU(_user);
+        userGame.setG(this);
+        users.add(userGame);
+    }
 
     public Game(){}
 

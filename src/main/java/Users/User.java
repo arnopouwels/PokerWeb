@@ -2,7 +2,10 @@ package Users;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Andre on 2015-01-16.
@@ -15,6 +18,19 @@ public class User {
     @Size(max = 12)
     private String username;
     private String password;
+
+    @OneToMany(mappedBy = "u")
+    private List<UserGame> games = new ArrayList<>();
+
+    public void addGame(Game _game) {
+        UserGame userGame = new UserGame();
+        userGame.setUsername(this.getUsername());
+        userGame.setGameName(_game.getGameName());
+        userGame.setU(this);
+        userGame.setG(_game);
+        games.add(userGame);
+    }
+
 
     public User(){}
 
