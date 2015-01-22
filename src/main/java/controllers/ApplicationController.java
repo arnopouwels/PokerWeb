@@ -109,8 +109,9 @@ public class ApplicationController {
         logged = names;
 
 
-        result.render("register", "Hello " + context.getSession().get("username"));
-        result.render("name", pokerService.test());
+        result.render("register", context.getSession().get("username"));
+        pokerService.createDeck();
+        result.render("evaluate", pokerService.test());
         result.render("card1", pokerService.getImage(pokerService.getHandList().get(0)));
         result.render("card2", pokerService.getImage(pokerService.getHandList().get(1)));
         result.render("card3", pokerService.getImage(pokerService.getHandList().get(2)));

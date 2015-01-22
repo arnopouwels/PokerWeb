@@ -3,28 +3,35 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Register</title>
+
+    <link href="/assets/webjars/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/webjars/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
 </head>
-<body>
-<h2>Register</h2>
+<body style="background:url(/assets/images/pokerBack.png) no-repeat center center fixed; -webkit-background-size:cover; background-size: cover;">
+    <br><br><br>
+    <div class="container">
+        <div class="col-lg-3" style="background:#F9F9F9; border-radius:10px;">
+            <h1 class="text-primary" align="center">Register</h1>
+            <div>
+                <form action = "index" method="post">
+                    Username: <br>
+                    <input type = "text" name = "usernameReg" id = "usernameReg" class="form-control" required> <br>
+                    Password: <br>
+                    <input type = "password" name = "passwordReg" id = "passwordReg" class="form-control" required> <label id="countLen"></label><span id = "result"></span> <br>
+                    <input type = "submit" class="btn btn-success btn-block" value="Register">
+                </form>
+            </div>
+            <br>
+            Already registered? Login <a href="/login">here</a>
+            <br>
+        </div>
+    </div>
 
-
-<form action = "index" method="post">
-    Username: <br>
-    <input type = "text" name = "usernameReg" id = "usernameReg"> <br>
-    Password: <br>
-    <input type = "password" name = "passwordReg" id = "passwordReg"> <label id="countLen"></label><span id = "result"></span> <br>
-    <input type = "submit" value = "Submit">
-</form>
-<br><br><br>
-<a href="/login">Return to login</a>
-
-
-<script type="text/javascript" src="/assets/webjars/jquery/2.1.1/jquery.js"></script>
-<script type="text/javascript" src="/assets/js/script.js" ></script>
-
-</body>
-</html>
+    <script type="text/javascript"src="/assets/webjars/jquery/2.1.1/jquery.js"></script>
+    <script type="text/javascript" src="/assets/webjars/tinymce-jquery/4.0.16/jscripts/tiny_mce/tiny_mce.js" ></script>
+    <script type="text/javascript" src="/assets/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
 </body>
 </html>
