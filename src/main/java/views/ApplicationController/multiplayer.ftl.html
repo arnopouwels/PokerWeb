@@ -2,15 +2,46 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Poker</title>
+
+    <link href="/assets/webjars/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/webjars/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
 </head>
-<body>
-<h2>Multiplayer</h2>
-Piet<div>${one}</div>
-Jan<div>${two}</div>
-Dirk<div>${three}</div>
-Tiaan<div>${four}</div>
-Sannie<div>${five}</div>
+<body style="background:url(/assets/images/pokerBack.png) no-repeat center center fixed; -webkit-background-size:cover; background-size: cover;">
+
+    <nav class="navbar navbar-default">
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/index">Single Player</a></li>
+                <li><a href="/history">History</a></li>
+            </ul>
+            <!-- <a class="navbar-brand" style="position:absolute; width:100%; left:0; text-align:center; margin:auto;">Poker Web Application</a> -->
+            <ul class="nav navbar-nav navbar-right">
+                <li><a>${register}</a></li>
+                <li class="active"><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    <br><br><br>
+    <select class="form-control">
+        <option value="one">One</option>
+        <option value="two">Two</option>
+        <option value="three">Three</option>
+        <option value="four">Four</option>
+        <option value="five">Five</option>
+    </select>
+
+
+<div>${one}</div>
+<div>${two}</div>
+<div>${three}</div>
+<div>${four}</div>
+<div>${five}</div>
 Winning Hand<div>${winHand}</div>
+
+<script type="text/javascript"src="/assets/webjars/jquery/2.1.1/jquery.js"></script>
+<script type="text/javascript" src="/assets/webjars/tinymce-jquery/4.0.16/jscripts/tiny_mce/tiny_mce.js" ></script>
+<script type="text/javascript" src="/assets/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
 </html>

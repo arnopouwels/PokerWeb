@@ -30,20 +30,29 @@ public class userGameService {
     }
 
     @UnitOfWork
-    public void getAllUserGames(){
+    public List<UserGame> getAllUserGames(){
         EntityManager entityManager = entityManagerProvider.get();
         String out = "";
         Query q = entityManager.createQuery("SELECT x FROM UserGame x");
 
         List<UserGame> Ugames = (List<UserGame>) q.getResultList();
-        if (Ugames != null)
-            for (int i = 0; i < Ugames.size(); i++)
-                System.out.println(Ugames.get(i).getGameName());
-        //return "No users";
+
+        return Ugames;
     }
 
     @UnitOfWork
-    public boolean UserGameGet(String gamename) {
+    public List<UserGame> getListOfGames(){
+        EntityManager entityManager = entityManagerProvider.get();
+        String out = "";
+        Query q = entityManager.createQuery("SELECT DISTINCT x.gameName FROM UserGame x");
+
+        List<UserGame> listGames = (List<UserGame>) q.getResultList();
+
+        return listGames;
+    }
+
+    @UnitOfWork
+    public List<UserGame> UserGameGet(String gamename) {
 
         EntityManager entityManager = entityManagerProvider.get();
 
@@ -51,12 +60,7 @@ public class userGameService {
         q.setParameter("gme", gamename);
         List<UserGame> games = (List<UserGame>) q.getResultList();
 
-        if (games == null)
-            return false;
-
-        for (int i = 0; i < games.size(); i++)
-            System.out.println(games.get(i).getGameName());
-        return true;
+        return games;
     }
 }
 

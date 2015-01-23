@@ -80,7 +80,7 @@ public class PokerService
         //createDeck();
         Hand newHand = dealHand();
         handList.add(newHand);
-        return evaluate(newHand);
+        return newHand.toString();
     }
 
     public String getImage(Card card) {

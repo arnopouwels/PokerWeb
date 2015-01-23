@@ -5,6 +5,8 @@ $(document).ready(function(){
 
     });
 
+
+
    /* $("#card1").fadeIn('slow',function(){
       $(this).animate({'bottom': '-=50px'},'slow');
     });
