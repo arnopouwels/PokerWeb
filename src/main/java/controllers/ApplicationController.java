@@ -30,6 +30,7 @@ import ninja.session.Session;
 
 import com.google.inject.Singleton;
 import org.eclipse.jetty.security.LoginService;
+import org.eclipse.jetty.server.Authentication;
 import services.*;
 
 import java.lang.Object;
@@ -57,6 +58,57 @@ public class ApplicationController {
     @Inject private multiplayerService multiplayerService;
     @Inject private userGameService userGameService;
 
+
+    public Result gameResults(@PathParam("gameName") String gameName, Context context) {
+        Result result = Results.html();
+
+        String text = "";
+
+        List<UserGame> ugl = userGameService.UserGameGet(gameName);
+
+        for (UserGame userGame : ugl) {
+
+
+            text += "<table id=\"tableGames\" class=\"table table-striped table-bordered\" cellspacing=\"0\" width=\"100%\">" +
+                    "<thead>" +
+                    "<tr><th>" + userGame.getGameName() + "</th></tr>" +
+                    "        <tr>" +
+                    "        <th>Username</th>" +
+                    "        <th>Hand</th>" +
+                    "        <th>Date</th>" +
+                    "        </tr>" +
+                    "        </thead>";
+
+            List<UserGame> usersInGame = userGameService.UserGameGet(ugl.get(0).getGameName());
+
+            for (int j = 0; j < usersInGame.size(); j++) {
+
+
+                String uig = usersInGame.get(j).getHand();
+                uig = uig.replace("(", "");
+                uig = uig.replace(")", "");
+                String[] arrayOne = uig.split(",");
+
+                text += "<tr>";
+                text += "<td>" + usersInGame.get(j).getUsername() + "</td>";
+                text += "<td>" + "<img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[0])) + ".png\" height=\"80\" width=\"50\" id=\"card1\" style=\"position:relative;\" />\n" +
+                        "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[1])) + ".png\" height=\"80\" width=\"50\" id=\"card2\" style=\"position:relative;\" />\n" +
+                        "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[2])) + ".png\" height=\"80\" width=\"50\" id=\"card3\" style=\"position:relative;\" />\n" +
+                        "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[3])) + ".png\" height=\"80\" width=\"50\" id=\"card4\" style=\"position:relative;\" />\n" +
+                        "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[4])) + ".png\" height=\"80\" width=\"50\" id=\"card5\" style=\"position:relative;\" /></td>";
+
+                text += "<td>" + usersInGame.get(j).getG().getDateOfGame() + "</td>";
+                text += "</tr>";
+
+            }
+            text += "</table>";
+        }
+
+        result.render("register", context.getSession().get("username"))
+                .render("result",text);
+
+        return result;
+    }
 
     public Result lobbyHost(Context context) {
 
@@ -129,7 +181,7 @@ public class ApplicationController {
                 text += "<font size=\"4\">" + UserGame.getUsername() + "</font>";
 
                 if (UserGame.getUsername().compareTo(UserGame.getG().getHost()) == 0) {
-                    text += "<button type=\"button\" class=\"btn btn-success\" style=\"float: right;\"><a style=\"text-decoration:none; color: #FFFFFF;\" href=\"/game/" + UserGame.getGameName() + "\">Start Game</a></button>";
+                    text += "<button type=\"button\" class=\"btn btn-success\" style=\"float: right;\"><a style=\"text-decoration:none; color: #FFFFFF;\" href=\"/gameResults/" + UserGame.getGameName() + "\">Start Game</a></button>";
                 }
 
                 text += "</div>";
