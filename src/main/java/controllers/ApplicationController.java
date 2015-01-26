@@ -52,10 +52,10 @@ public class ApplicationController {
 
     @Inject private PokerService pokerService;
     @Inject private RegisterService registerService;
-    @Inject private loginService _loginService;
+    @Inject private loginService loginService;
     @Inject private Session session;
-    @Inject private multiplayerService _multiplayerService;
-    @Inject private userGameService _userGameService;
+    @Inject private multiplayerService multiplayerService;
+    @Inject private userGameService userGameService;
 
 
     public Result lobbyHost(Context context) {
@@ -72,7 +72,7 @@ public class ApplicationController {
     public Result lobby(@PathParam("gameName") String gameName, Context context) {
         Result result = Results.html();
 
-        List<Game> gameListExists = _multiplayerService.gameGet(gameName);
+        List<Game> gameListExists = multiplayerService.gameGet(gameName);
 
         if (gameListExists == null || gameListExists.size() == 0) {
             Game service = new Game();
@@ -80,7 +80,7 @@ public class ApplicationController {
             service.setGameName(gameName);
             service.setActive(true);
             service.setHost(context.getSession().get("username"));
-            _multiplayerService.gameStore(service);
+            multiplayerService.gameStore(service);
         }
 
         if (gameName != null) {
@@ -90,38 +90,48 @@ public class ApplicationController {
             user.setUsername("Andre7");
             user.setPassword("andre7");*/
 
-            List<User> usersList = registerService.userGetUs(context.getSession().get("username"));
+            List<UserGame> ugl = userGameService.UserGameGameGet(gameName, context.getSession().get("username"));
 
-            User user = usersList.get(0);
+            if (ugl.size() == 0) {
 
-            List<Game> gameList = _multiplayerService.gameGet(gameName);
 
-            Game service = gameList.get(0);
+                List<User> usersList = registerService.userGetUs(context.getSession().get("username"));
 
-            UserGame userService = new UserGame();
+                User user = usersList.get(0);
 
-            userService.setUsername(user.getUsername());
-            userService.setGameName(service.getGameName());
-            String hand = pokerService.test();
+                List<Game> gameList = multiplayerService.gameGet(gameName);
 
-            userService.setHand(hand);
-            user.addGame(service);
-            userService.setU(user);
-            service.addUser(user);
-            userService.setG(service);
+                Game service = gameList.get(0);
 
-           // registerService.userStore(user);
-            _userGameService.userGameStore(userService);
+                UserGame userService = new UserGame();
 
-            List<UserGame> gamesList = _userGameService.UserGameGet(gameName);
+                userService.setUsername(user.getUsername());
+                userService.setGameName(service.getGameName());
+                String hand = pokerService.test();
+
+                userService.setHand(hand);
+                user.addGame(service);
+                userService.setU(user);
+                service.addUser(user);
+                userService.setG(service);
+
+                // registerService.userStore(user);
+                userGameService.userGameStore(userService);
+            }
+
+            List<UserGame> gamesList = userGameService.UserGameGet(gameName);
 
             String text = "";
             for (UserGame UserGame : gamesList) {
 
-
                 text += "<br><div class=\"col-lg-6\" style=\"background:#F2F2F2; border-radius:10px;\">";
 
                 text += "<font size=\"4\">" + UserGame.getUsername() + "</font>";
+
+                if (UserGame.getUsername().compareTo(UserGame.getG().getHost()) == 0) {
+                    text += "<button type=\"button\" class=\"btn btn-success\" style=\"float: right;\"><a style=\"text-decoration:none; color: #FFFFFF;\" href=\"/game/" + UserGame.getGameName() + "\">Start Game</a></button>";
+                }
+
                 text += "</div>";
             }
 
@@ -207,7 +217,7 @@ public class ApplicationController {
             .render("winHand", pokerService.evaluateHands());
         result.render("register", context.getSession().get("username"));*/
 
-        List<Game> gamesList = _multiplayerService.getAllActiveGames();
+        List<Game> gamesList = multiplayerService.getAllActiveGames();
 
         String text = "";
 
@@ -228,13 +238,15 @@ public class ApplicationController {
 
         for (Game game : gamesList) {
 
+            if (game.getHost().compareTo(context.getSession().get("username")) != 0) {
 
-            text += "<br><div class=\"col-lg-6\" style=\"background:#F2F2F2; border-radius:10px;\">";
+                text += "<br><div class=\"col-lg-6\" style=\"background:#F2F2F2; border-radius:10px;\">";
 
-            text += "<font size=\"4\">" + game.getGameName() + "</font>";
-            text += "<button type=\"button\" class=\"btn btn-success\" style=\"float: right;\"><a style=\"text-decoration:none; color: #FFFFFF;\" href=\"/lobby/"+game.getGameName()+"\">Join</a></button>";
+                text += "<font size=\"4\">" + game.getGameName() + "</font>";
+                text += "<button type=\"button\" class=\"btn btn-success\" style=\"float: right;\"><a style=\"text-decoration:none; color: #FFFFFF;\" href=\"/lobby/" + game.getGameName() + "\">Join</a></button>";
 
-            text += "</div>";
+                text += "</div>";
+            }
         }
 
         result.render("register", context.getSession().get("username"))
@@ -244,13 +256,13 @@ public class ApplicationController {
 
     public Result history(Context context) {
 
-        List<UserGame> uGame = _userGameService.getAllUserGames();
+        List<UserGame> uGame = userGameService.getAllUserGames();
 
         String text = "";
 
 
-        List<UserGame> listOfGames = _userGameService.getListOfGames();
-        String listOfGamesString = _userGameService.getListOfGames().toString();
+        List<UserGame> listOfGames = userGameService.getListOfGames();
+        String listOfGamesString = userGameService.getListOfGames().toString();
 
         listOfGamesString = listOfGamesString.replace("[", "");
         listOfGamesString = listOfGamesString.replace("]", "");
@@ -276,7 +288,7 @@ public class ApplicationController {
                             "        </tr>" +
                             "        </thead>";
 
-                    List<UserGame> usersInGame = _userGameService.UserGameGet(array[i].toString());
+                    List<UserGame> usersInGame = userGameService.UserGameGet(array[i].toString());
 
                     for (int j = 0; j < usersInGame.size(); j++) {
 
@@ -315,21 +327,34 @@ public class ApplicationController {
 
         Result result = Results.html();
 
-        if (context.getParameter("usernameReg") == null && context.getParameter("passwordReg") == null)
-        {
-            String name = context.getParameter("username");
-            String pass = context.getParameter("password");
-            if (!registerService.userGet(name)) {
-                result = Results.redirect("/register");
+        if (context.getParameter("usernameReg") == null && context.getParameter("passwordReg") == null) {
+            String username = context.getParameter("username");
+            String password = context.getParameter("password");
+
+            if (!registerService.userGet(username)) {
+                result = Results.redirect("/login");
                 return result;
             }
+            else {
+                List<User> listUsers = registerService.userGetUs(username);
+                User user = listUsers.get(0);
 
-            context.getSession().put("username", name);
+                if (user.getPassword().compareTo(password) == 0) {
+                    context.getSession().put("username", username);
+                }
+                else {
+                    result = Results.redirect("/login");
+                    return result;
+                }
+            }
+
         }
         else {
-            String name = context.getParameter("usernameReg");
-            String pass = context.getParameter("passwordReg");
-            User u = new User(name, pass);
+            String username = context.getParameter("usernameReg");
+            String password = context.getParameter("passwordReg");
+
+            User u = new User(username, password);
+
             if (!registerService.userStore(u)) {
                 result = Results.redirect("/register");
                 return result;
@@ -340,16 +365,18 @@ public class ApplicationController {
         }
 
 
-        result.render("register", context.getSession().get("username"));
-        System.out.println("ssssssssssssssssssssssssssssssssssssssssssssss: " + context.getSession().get("username"));
+        if (context.getSession().get("username") != null) {
 
-        pokerService.createDeck();
-        result.render("evaluate", pokerService.test());
-        result.render("card1", pokerService.getImage(pokerService.getHandList().get(0)));
-        result.render("card2", pokerService.getImage(pokerService.getHandList().get(1)));
-        result.render("card3", pokerService.getImage(pokerService.getHandList().get(2)));
-        result.render("card4", pokerService.getImage(pokerService.getHandList().get(3)));
-        result.render("card5", pokerService.getImage(pokerService.getHandList().get(4)));
+            result.render("register", context.getSession().get("username"));
+            pokerService.createDeck();
+            result.render("evaluate", pokerService.test());
+            result.render("card1", pokerService.getImage(pokerService.getHandList().get(0)));
+            result.render("card2", pokerService.getImage(pokerService.getHandList().get(1)));
+            result.render("card3", pokerService.getImage(pokerService.getHandList().get(2)));
+            result.render("card4", pokerService.getImage(pokerService.getHandList().get(3)));
+            result.render("card5", pokerService.getImage(pokerService.getHandList().get(4)));
+        }
+
         return result;
 
     }

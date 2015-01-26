@@ -73,7 +73,7 @@ public class RegisterService {
         q.setParameter("usr", _username);
         List<User> users = (List<User>) q.getResultList();
 
-        if (users == null)
+        if (users == null || users.size() == 0)
             return false;
 
         return true;

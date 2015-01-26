@@ -59,5 +59,18 @@ public class userGameService {
 
         return games;
     }
+
+    @UnitOfWork
+    public List<UserGame> UserGameGameGet(String gamename, String username) {
+
+        EntityManager entityManager = entityManagerProvider.get();
+
+        Query q = entityManager.createQuery("SELECT x FROM UserGame x where x.gameName = :gme AND x.username = :usr");
+        q.setParameter("gme", gamename);
+        q.setParameter("usr", username);
+        List<UserGame> games = (List<UserGame>) q.getResultList();
+
+        return games;
+    }
 }
 
