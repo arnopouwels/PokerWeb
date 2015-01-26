@@ -10,33 +10,34 @@
 </head>
 <body style="background:url(/assets/images/pokerBack.png) no-repeat center center fixed; -webkit-background-size:cover; background-size: cover;">
 
-<nav class="navbar navbar-default">
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="/index">Single Player</a></li>
-            <li><a href="/multiplayer">Multiplayer</a></li>
-        </ul>
-        <!-- <a class="navbar-brand" style="position:absolute; width:100%; left:0; text-align:center; margin:auto;">Poker Web Application</a> -->
-        <ul class="nav navbar-nav navbar-right">
-            <li><a>${register}</a></li>
-            <li class="active"><a href="/logout">Logout</a></li>
-        </ul>
-    </div>
-</nav>
-<br><br><br>
+    <nav class="navbar navbar-default">
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/index">Single Player</a></li>
+                <li><a href="/multiplayer">Multiplayer</a></li>
+            </ul>
+            <!-- <a class="navbar-brand" style="position:absolute; width:100%; left:0; text-align:center; margin:auto;">Poker Web Application</a> -->
+            <ul class="nav navbar-nav navbar-right">
+                <li><a>${register}</a></li>
+                <li class="active"><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    <br><br><br>
 
 
-<div class="container">
-    <div class="col-lg-7" style="background:#F9F9F9; border-radius:10px;">
-        <h1 class="text-primary" align="center">Games</h1>
-        <div>
-            <#noescape>${tableData}</#noescape>
+    <div class="container">
+        <div class="col-lg-7" style="background:#F9F9F9; border-radius:10px;">
+            <h1 class="text-primary" align="center">Games</h1>
+            <div>
+                <#noescape>${tableData}</#noescape>
+            </div>
         </div>
     </div>
-</div>
+    <br><br><br>
 
-<script type="text/javascript"src="/assets/webjars/jquery/2.1.1/jquery.js"></script>
-<script type="text/javascript" src="/assets/webjars/tinymce-jquery/4.0.16/jscripts/tiny_mce/tiny_mce.js" ></script>
-<script type="text/javascript" src="/assets/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript"src="/assets/webjars/jquery/2.1.1/jquery.js"></script>
+    <script type="text/javascript" src="/assets/webjars/tinymce-jquery/4.0.16/jscripts/tiny_mce/tiny_mce.js" ></script>
+    <script type="text/javascript" src="/assets/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
 </html>

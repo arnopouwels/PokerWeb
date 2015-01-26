@@ -25,6 +25,7 @@ import com.google.inject.persist.Transactional;
 import ninja.Result;
 import ninja.Results;
 
+import ninja.params.PathParam;
 import ninja.session.Session;
 
 import com.google.inject.Singleton;
@@ -57,7 +58,83 @@ public class ApplicationController {
     @Inject private userGameService _userGameService;
 
 
+    public Result lobbyHost(Context context) {
+
+        Result result = Results.html();
+
+        String hostName = context.getParameter("hostName");
+
+        result.redirect("/lobby/" + hostName);
+
+        return result;
+    }
+
+    public Result lobby(@PathParam("gameName") String gameName, Context context) {
+        Result result = Results.html();
+
+        List<Game> gameListExists = _multiplayerService.gameGet(gameName);
+
+        if (gameListExists == null || gameListExists.size() == 0) {
+            Game service = new Game();
+            service.setDateOfGame(new Date());
+            service.setGameName(gameName);
+            service.setActive(true);
+            service.setHost(context.getSession().get("username"));
+            _multiplayerService.gameStore(service);
+        }
+
+        if (gameName != null) {
+            pokerService.createDeck();
+
+            /*User user = new User();
+            user.setUsername("Andre7");
+            user.setPassword("andre7");*/
+
+            List<User> usersList = registerService.userGetUs(context.getSession().get("username"));
+
+            User user = usersList.get(0);
+
+            List<Game> gameList = _multiplayerService.gameGet(gameName);
+
+            Game service = gameList.get(0);
+
+            UserGame userService = new UserGame();
+
+            userService.setUsername(user.getUsername());
+            userService.setGameName(service.getGameName());
+            String hand = pokerService.test();
+
+            userService.setHand(hand);
+            user.addGame(service);
+            userService.setU(user);
+            service.addUser(user);
+            userService.setG(service);
+
+           // registerService.userStore(user);
+            _userGameService.userGameStore(userService);
+
+            List<UserGame> gamesList = _userGameService.UserGameGet(gameName);
+
+            String text = "";
+            for (UserGame UserGame : gamesList) {
+
+
+                text += "<br><div class=\"col-lg-6\" style=\"background:#F2F2F2; border-radius:10px;\">";
+
+                text += "<font size=\"4\">" + UserGame.getUsername() + "</font>";
+                text += "</div>";
+            }
+
+            result.render("register", context.getSession().get("username"))
+                    .render("players",text);
+            return result;
+        }
+
+        return result;
+    }
+
     public Result multiplayer(Context context) {
+        Result result = Results.html();
 
         /*User user = new User();
         user.setUsername("ssssss");
@@ -66,6 +143,7 @@ public class ApplicationController {
         Game service = new Game();
         service.setDateOfGame(new Date());
         service.setGameName("Lekker");
+        service.setActive(true);
         UserGame userService = new UserGame();
 
         userService.setUsername(user.getUsername());
@@ -104,6 +182,7 @@ public class ApplicationController {
         Game service2 = new Game();
         service2.setDateOfGame(new Date());
         service2.setGameName("Lekkerste");
+        service.setActive(false);
         UserGame userService2 = new UserGame();
 
         userService2.setUsername(user2.getUsername());
@@ -119,15 +198,47 @@ public class ApplicationController {
         _userGameService.userGameStore(userService2);*/
 
 
-        Result result = Results.html();
-        pokerService.createDeck();
+        /*pokerService.createDeck();
         result.render("one", pokerService.test())
             .render("two", pokerService.test())
             .render("three", pokerService.test())
             .render("four", pokerService.test())
             .render("five", pokerService.test())
             .render("winHand", pokerService.evaluateHands());
-        result.render("register", context.getSession().get("username"));
+        result.render("register", context.getSession().get("username"));*/
+
+        List<Game> gamesList = _multiplayerService.getAllActiveGames();
+
+        String text = "";
+
+        text += "<div class=\"container\">\n" +
+                "        <div class=\"col-lg-3\" style=\"background:#F9F9F9; border-radius:10px;\">\n" +
+                "            <h1 class=\"text-primary\" align=\"center\">Host Game</h1>\n" +
+                "            <div>\n" +
+                "                <form action = \"lobbyHost\" method=\"post\">\n" +
+                "                    Game Name: <br>\n" +
+                "                    <input type = \"text\" name = \"hostName\" id = \"hostName\" class=\"form-control\" required > <br>\n" +
+                "                    <input type = \"submit\" class=\"btn btn-success btn-block\" value=\"Host Game\">\n" +
+                "                </form>\n" +
+                "            </div>\n" +
+                "            <br>\n" +
+                "            <br>\n" +
+                "        </div>\n" +
+                "    </div>\n";
+
+        for (Game game : gamesList) {
+
+
+            text += "<br><div class=\"col-lg-6\" style=\"background:#F2F2F2; border-radius:10px;\">";
+
+            text += "<font size=\"4\">" + game.getGameName() + "</font>";
+            text += "<button type=\"button\" class=\"btn btn-success\" style=\"float: right;\"><a style=\"text-decoration:none; color: #FFFFFF;\" href=\"/lobby/"+game.getGameName()+"\">Join</a></button>";
+
+            text += "</div>";
+        }
+
+        result.render("register", context.getSession().get("username"))
+                .render("availableGames",text);
         return result;
     }
 
@@ -183,8 +294,6 @@ public class ApplicationController {
                                 "        <img src=\"/assets/images/PlayingCards/"+pokerService.getImage(new Card(arrayOne[3]))+".png\" height=\"80\" width=\"50\" id=\"card4\" style=\"position:relative;\" />\n" +
                                 "        <img src=\"/assets/images/PlayingCards/"+pokerService.getImage(new Card(arrayOne[4]))+".png\" height=\"80\" width=\"50\" id=\"card5\" style=\"position:relative;\" /></td>";
 
-                        //text += "<td>" + "<img src=\"/assets/images/PlayingCards/"+pokerService.getImage(new Card(usersInGame.get(j).getHand().substring(1,3)))+".png\" height=\"80\" width=\"50\" id=\"card1\" style=\"position:relative;\" /></td>";
-
                         text += "<td>" + usersInGame.get(j).getG().getDateOfGame() + "</td>";
                         text += "</tr>";
 
@@ -205,43 +314,35 @@ public class ApplicationController {
     public Result index(Context context) {
 
         Result result = Results.html();
-        String names = "";
-        //boolean hello = registerService.userGet();
+
         if (context.getParameter("usernameReg") == null && context.getParameter("passwordReg") == null)
         {
             String name = context.getParameter("username");
             String pass = context.getParameter("password");
             if (!registerService.userGet(name)) {
                 result = Results.redirect("/register");
-                System.out.println("already");
                 return result;
             }
-            names = name;
-            //session.put("username", names);
-            context.getSession().put("username", names);
 
+            context.getSession().put("username", name);
         }
         else {
             String name = context.getParameter("usernameReg");
             String pass = context.getParameter("passwordReg");
-            User u = new User(name,pass);
-            if (!registerService.userStore(u))
-            {
+            User u = new User(name, pass);
+            if (!registerService.userStore(u)) {
                 result = Results.redirect("/register");
-                System.out.println("No user found");
                 return result;
             }
-            names = name;
 
-            result = Results.redirect("/register");
+            result = Results.redirect("/login");
             return result;
         }
-        session = context.getSession();
-        c = context;
-        logged = names;
 
 
         result.render("register", context.getSession().get("username"));
+        System.out.println("ssssssssssssssssssssssssssssssssssssssssssssss: " + context.getSession().get("username"));
+
         pokerService.createDeck();
         result.render("evaluate", pokerService.test());
         result.render("card1", pokerService.getImage(pokerService.getHandList().get(0)));
@@ -252,28 +353,14 @@ public class ApplicationController {
         return result;
 
     }
-    private String logged = "";
-    Context c = null;
+
     public Result login()
     {
         Result result = Results.html();
-        /*if (c != null && c.getSession().get("username") != null
-                && logged.
-                compareTo("") != 0
-                && c.getSession().
-                get("username").
-                compareTo(logged) ==0) {
-            System.out.println("HEKEKEKEKEK");
-            return result.redirect("/index");
-        }*/
-
-        //result.render("login", loginService.output());
         return result;
     }
 
-    public Result register()
-    {
-        registerService.getAllUsers();
+    public Result register() {
         Result result = Results.html();
         result = login();
         return result;
@@ -282,15 +369,13 @@ public class ApplicationController {
     public Result logout(Context context)
     {
         Result result = Results.redirect("/login");
-        c.getSession().clear();
-        session = null;
         context.getSession().clear();
         return result;
     }
-    
+
     public static class SimplePojo {
 
         public String content;
-        
+
     }
 }

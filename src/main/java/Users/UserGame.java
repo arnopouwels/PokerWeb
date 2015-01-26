@@ -4,9 +4,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-/**
- * Created by Dihan on 1/20/2015.
- */
 
 @Entity
 @IdClass(id_UserGame.class)

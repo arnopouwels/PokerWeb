@@ -12,9 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 
-/**
- * Created by Dihan on 1/22/2015.
- */
 @Singleton
 public class userGameService {
 

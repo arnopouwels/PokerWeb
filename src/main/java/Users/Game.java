@@ -7,10 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Dihan on 1/20/2015.
- */
-
 @Entity
 public class Game {
 
@@ -21,8 +17,12 @@ public class Game {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateOfGame;
 
-    @OneToMany(mappedBy = "g")
+    @OneToMany(mappedBy = "g", fetch = FetchType.EAGER)
     private List<UserGame> users = new ArrayList<>();
+
+    private boolean active;
+
+    private String host;
 
     public void addUser(User _user) {
         UserGame userGame = new UserGame();
@@ -40,6 +40,14 @@ public class Game {
         gameName = _gameName;
         dateOfGame = _date;
     }
+
+    public String getHost() { return host; }
+
+    public void setHost(String _host) { this.host = _host; }
+
+    public boolean getActive() { return active; }
+
+    public void setActive(boolean _active) { this.active = _active; }
 
     public String getGameName(){
         return gameName;

@@ -10,17 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * Created by Andre on 2015-01-16.
- */
-
 public class loginService  {
-
-    public static String output()
-    {
-
-        return "Login to poker service";
-    }
 
     public boolean findUser(String _username) {
         for (User user : RegisterService.getUsers()){

@@ -17,18 +17,10 @@ import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Andre on 2015-01-16.
- */
 
 @Singleton
 public class RegisterService {
 
-    public static String output()
-    {
-        return "Register to poker service";
-
-    }
 
     public static boolean createUser(String name, String pass)
     {
@@ -69,10 +61,7 @@ public class RegisterService {
         Query q = entityManager.createQuery("SELECT x FROM User x");
 
         List<User> users = (List<User>) q.getResultList();
-        if (users != null)
-            for (int i = 0; i < users.size(); i++)
-                System.out.println(users.get(i).getUsername());
-        //return "No users";
+
     }
 
     @UnitOfWork
@@ -87,9 +76,19 @@ public class RegisterService {
         if (users == null)
             return false;
 
-        for (int i = 0; i < users.size(); i++)
-            System.out.println(users.get(i).getUsername() + " " + users.get(i).getPassword());
         return true;
+    }
+
+    @UnitOfWork
+    public List<User> userGetUs(String _username) {
+
+        EntityManager entityManager = entityManagerProvider.get();
+
+        Query q = entityManager.createQuery("SELECT x FROM User x where x.username = :usr");
+        q.setParameter("usr", _username);
+        List<User> users = (List<User>) q.getResultList();
+
+        return users;
     }
 
 }

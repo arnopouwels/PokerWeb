@@ -9,9 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Andre on 2015-01-12.
- */
 
 @Singleton
 public class PokerService

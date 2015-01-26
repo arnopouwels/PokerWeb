@@ -8,6 +8,8 @@ create table User (
 create table Game (
     gameName varchar(100) not null,
     dateOfGame TIMESTAMP,
+    active bit,
+    host varchar(100) not null,
     primary key (gameName)
 );
 

@@ -24,24 +24,20 @@
         </div>
     </nav>
     <br><br><br>
-    <select class="form-control">
-        <option value="one">One</option>
-        <option value="two">Two</option>
-        <option value="three">Three</option>
-        <option value="four">Four</option>
-        <option value="five">Five</option>
-    </select>
+
+    <div class="container">
+        <div class="col-lg-6" style="background:#F9F9F9; border-radius:10px;">
+            <h1 class="text-primary" align="center">Available Games to Join</h1>
+            <div style="padding-left:20%;">
+                <#noescape>${availableGames}</#noescape>
+                <br><br><br>
+            </div>
+        </div>
+    </div>
 
 
-<div>${one}</div>
-<div>${two}</div>
-<div>${three}</div>
-<div>${four}</div>
-<div>${five}</div>
-Winning Hand<div>${winHand}</div>
-
-<script type="text/javascript"src="/assets/webjars/jquery/2.1.1/jquery.js"></script>
-<script type="text/javascript" src="/assets/webjars/tinymce-jquery/4.0.16/jscripts/tiny_mce/tiny_mce.js" ></script>
-<script type="text/javascript" src="/assets/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript"src="/assets/webjars/jquery/2.1.1/jquery.js"></script>
+    <script type="text/javascript" src="/assets/webjars/tinymce-jquery/4.0.16/jscripts/tiny_mce/tiny_mce.js" ></script>
+    <script type="text/javascript" src="/assets/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
 </html>

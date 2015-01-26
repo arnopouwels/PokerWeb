@@ -34,7 +34,6 @@ public class Module extends AbstractModule {
         bind(RegisterService.class);
         bind(loginService.class);
         bind(multiplayerService.class);
-        bind(ninja.session.Session.class);
         bind(userGameService.class);
     }
 

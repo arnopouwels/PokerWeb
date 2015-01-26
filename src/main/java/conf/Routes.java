@@ -28,14 +28,14 @@ public class Routes implements ApplicationRoutes {
     public void init(Router router) {  
         
         router.GET().route("/").with(ApplicationController.class, "login");
-        //router.GET().route("/hello_world.json").with(ApplicationController.class, "helloWorldJson");
         router.GET().route("/login").with(ApplicationController.class, "login");
 
         router.GET().route("/register").with(ApplicationController.class, "register");
-        //router.POST().route("/random").with(ApplicationController.class, "random");
         router.GET().route("/logout").with(ApplicationController.class, "logout");
         router.POST().route("/index").with(ApplicationController.class, "index");
         router.GET().route("/multiplayer").with(ApplicationController.class, "multiplayer");
+        router.GET().route("/lobby/{gameName}").with(ApplicationController.class, "lobby");
+        router.POST().route("/lobbyHost").with(ApplicationController.class, "lobbyHost");
         router.GET().route("/history").with(ApplicationController.class, "history");
         
 
@@ -48,7 +48,7 @@ public class Routes implements ApplicationRoutes {
         ///////////////////////////////////////////////////////////////////////
         // Index / Catchall shows index page
         ///////////////////////////////////////////////////////////////////////
-        router.GET().route("/.*").with(ApplicationController.class, "index");
+        router.GET().route("/.*").with(ApplicationController.class, "login");
     }
 
 }

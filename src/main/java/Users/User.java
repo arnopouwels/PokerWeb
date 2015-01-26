@@ -1,15 +1,10 @@
 package Users;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Andre on 2015-01-16.
- */
 
 @Entity
 public class User {
@@ -19,7 +14,7 @@ public class User {
     private String username;
     private String password;
 
-    @OneToMany(mappedBy = "u")
+    @OneToMany(mappedBy = "u", fetch = FetchType.EAGER)
     private List<UserGame> games = new ArrayList<>();
 
     public void addGame(Game _game) {
