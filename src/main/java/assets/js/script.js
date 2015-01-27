@@ -1,27 +1,8 @@
 $(document).ready(function(){
     $("#passwordReg").keyup(function(){
         $("#result").html(strength($(this).val()));
-        //$("#countLen").text($(this).val().length);
-
     });
 
-
-
-   /* $("#card1").fadeIn('slow',function(){
-      $(this).animate({'bottom': '-=50px'},'slow');
-    });
-    $("#card2").fadeIn('slow',function(){
-          $(this).animate({'bottom': '-=50px'},'slow');
-        });
-    $("#card3").fadeIn('slow',function(){
-          $(this).animate({'bottom': '-=50px'},'slow');
-        });
-    $("#card4").fadeIn('slow',function(){
-          $(this).animate({'bottom': '-=50px'},'slow');
-        });
-    $("#card5").fadeIn('slow',function(){
-          $(this).animate({'bottom': '-=50px'},'slow');
-        });*/
 });
 
 function strength(pass)

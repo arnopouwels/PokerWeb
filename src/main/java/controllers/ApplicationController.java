@@ -21,31 +21,18 @@ import Users.User;
 import Users.UserGame;
 import cards.Card;
 import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
 import ninja.Result;
 import ninja.Results;
 
 import ninja.params.PathParam;
-import ninja.session.Session;
 
 import com.google.inject.Singleton;
-import org.eclipse.jetty.security.LoginService;
-import org.eclipse.jetty.server.Authentication;
 import services.*;
 
-import java.lang.Object;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import javax.swing.Popup;
 
 import ninja.Context;
-
-import javax.swing.*;
-import javax.swing.text.html.HTML;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 
 
 @Singleton
@@ -54,7 +41,6 @@ public class ApplicationController {
     @Inject private PokerService pokerService;
     @Inject private RegisterService registerService;
     @Inject private loginService loginService;
-    @Inject private Session session;
     @Inject private multiplayerService multiplayerService;
     @Inject private userGameService userGameService;
 
@@ -138,10 +124,6 @@ public class ApplicationController {
         if (gameName != null) {
             pokerService.createDeck();
 
-            /*User user = new User();
-            user.setUsername("Andre7");
-            user.setPassword("andre7");*/
-
             List<UserGame> ugl = userGameService.UserGameGameGet(gameName, context.getSession().get("username"));
 
             if (ugl.size() == 0) {
@@ -166,8 +148,7 @@ public class ApplicationController {
                 userService.setU(user);
                 service.addUser(user);
                 userService.setG(service);
-
-                // registerService.userStore(user);
+                
                 userGameService.userGameStore(userService);
             }
 
@@ -197,77 +178,6 @@ public class ApplicationController {
 
     public Result multiplayer(Context context) {
         Result result = Results.html();
-
-        /*User user = new User();
-        user.setUsername("ssssss");
-        user.setPassword("aaaaaa");
-
-        Game service = new Game();
-        service.setDateOfGame(new Date());
-        service.setGameName("Lekker");
-        service.setActive(true);
-        UserGame userService = new UserGame();
-
-        userService.setUsername(user.getUsername());
-        userService.setGameName(service.getGameName());
-        userService.setHand(pokerService.test());
-        user.addGame(service);
-        userService.setU(user);
-        service.addUser(user);
-        userService.setG(service);
-
-        registerService.userStore(user);
-        _multiplayerService.gameStore(service);
-        _userGameService.userGameStore(userService);
-
-        User user1 = new User();
-        user1.setUsername("bbbbb");
-        user1.setPassword("cccccc");
-
-        UserGame userService1 = new UserGame();
-
-        userService1.setUsername(user1.getUsername());
-        userService1.setGameName(service.getGameName());
-        userService1.setHand(pokerService.test());
-        user1.addGame(service);
-        userService1.setU(user1);
-        service.addUser(user1);
-        userService1.setG(service);
-
-        registerService.userStore(user1);
-        _userGameService.userGameStore(userService1);
-
-        User user2 = new User();
-        user2.setUsername("Arno");
-        user2.setPassword("aaaaaaaaaa");
-
-        Game service2 = new Game();
-        service2.setDateOfGame(new Date());
-        service2.setGameName("Lekkerste");
-        service.setActive(false);
-        UserGame userService2 = new UserGame();
-
-        userService2.setUsername(user2.getUsername());
-        userService2.setGameName(service2.getGameName());
-        userService2.setHand(pokerService.test());
-        user2.addGame(service2);
-        userService2.setU(user2);
-        service2.addUser(user2);
-        userService2.setG(service2);
-
-        registerService.userStore(user2);
-        _multiplayerService.gameStore(service2);
-        _userGameService.userGameStore(userService2);*/
-
-
-        /*pokerService.createDeck();
-        result.render("one", pokerService.test())
-            .render("two", pokerService.test())
-            .render("three", pokerService.test())
-            .render("four", pokerService.test())
-            .render("five", pokerService.test())
-            .render("winHand", pokerService.evaluateHands());
-        result.render("register", context.getSession().get("username"));*/
 
         List<Game> gamesList = multiplayerService.getAllActiveGames();
 
