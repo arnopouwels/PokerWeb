@@ -1,3 +1,9 @@
 /* Add additional stylesheets below
 -------------------------------------------------- */
 
+.whiteWithCircleBorder {
+    background:#F9F9F9;
+    border-radius:10px;
+    padding:10px;
+}
+

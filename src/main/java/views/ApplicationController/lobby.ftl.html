@@ -19,6 +19,7 @@
         <!-- <a class="navbar-brand" style="position:absolute; width:100%; left:0; text-align:center; margin:auto;">Poker Web Application</a> -->
         <ul class="nav navbar-nav navbar-right">
             <li><a>${register}</a></li>
+            <li><a>R${money}</a></li>
             <li class="active"><a href="/logout">Logout</a></li>
         </ul>
     </div>
@@ -27,7 +28,7 @@
 
 <div class="container">
     <div class="col-lg-6" style="background:#F9F9F9; border-radius:10px;">
-        <h1 class="text-primary" align="center">Available Games to Join</h1>
+        <h1 class="text-primary" align="center">Waiting for players for ${gameName}</h1>
         <div id="hostLobby" style="padding-left:20%;">
             <#noescape>${players}</#noescape>
             <br><br><br>

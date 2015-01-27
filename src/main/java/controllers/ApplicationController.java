@@ -24,13 +24,17 @@ import com.google.inject.Inject;
 import ninja.Result;
 import ninja.Results;
 
+import ninja.Router;
 import ninja.params.PathParam;
 
 import com.google.inject.Singleton;
+import ninja.session.FlashScope;
 import services.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import ninja.Context;
 
@@ -43,6 +47,7 @@ public class ApplicationController {
     @Inject private loginService loginService;
     @Inject private multiplayerService multiplayerService;
     @Inject private userGameService userGameService;
+    @Inject private Router router;
 
 
     public Result gameResults(@PathParam("gameName") String gameName, Context context) {
@@ -90,25 +95,31 @@ public class ApplicationController {
             text += "</table>";
         }
 
-        result.render("register", context.getSession().get("username"))
+        String username = context.getSession().get("username");
+        int money = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+        result.render("register", username)
+                .render("money", money)
                 .render("result",text);
 
         return result;
     }
 
-    public Result lobbyHost(Context context) {
-
+    public Result lobbyHost(Context context, FlashScope flashScope) {
         Result result = Results.html();
 
-        String hostName = context.getParameter("hostName");
+        String username = context.getSession().get("username");
+        String gameName = context.getParameter("gameName");
+        int playerMoney = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+        int costToPlay = context.getParameterAsInteger("buyInAmount");
 
-        result.redirect("/lobby/" + hostName);
-
-        return result;
-    }
-
-    public Result lobby(@PathParam("gameName") String gameName, Context context) {
-        Result result = Results.html();
+        if (costToPlay > playerMoney) {
+            flashScope.error("You do not have enough funds to host a game that cost R " + costToPlay);
+            return result.redirect(router.getReverseRoute(ApplicationController.class, "multiplayer"));
+        }
+        if (costToPlay < 100 || costToPlay > 10000) {
+            flashScope.error("Please choose an amount between R100 and R10000");
+            return result.redirect(router.getReverseRoute(ApplicationController.class, "multiplayer"));
+        }
 
         List<Game> gameListExists = multiplayerService.gameGet(gameName);
 
@@ -118,8 +129,18 @@ public class ApplicationController {
             service.setGameName(gameName);
             service.setActive(true);
             service.setHost(context.getSession().get("username"));
+            service.setCostToPlay(costToPlay);
             multiplayerService.gameStore(service);
         }
+
+        result.redirect("/lobby/" + gameName);
+        return result;
+    }
+
+    public Result lobby(@PathParam("gameName") String gameName, Context context) {
+        Result result = Results.html();
+
+        List<Game> gameListExists = multiplayerService.gameGet(gameName);
 
         if (gameName != null) {
             pokerService.createDeck();
@@ -168,7 +189,11 @@ public class ApplicationController {
                 text += "</div>";
             }
 
-            result.render("register", context.getSession().get("username"))
+            String username = context.getSession().get("username");
+            int money = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+            result.render("register", username)
+                    .render("money", money)
+                    .render("gameName", gameName)
                     .render("players",text);
             return result;
         }
@@ -179,40 +204,16 @@ public class ApplicationController {
     public Result multiplayer(Context context) {
         Result result = Results.html();
 
+        String username = context.getSession().get("username");
         List<Game> gamesList = multiplayerService.getAllActiveGames();
+        gamesList = gamesList.stream()
+                             .filter(g -> g.getHost().compareTo(username) != 0)
+                             .collect(Collectors.toList());
 
-        String text = "";
-
-        text += "<div class=\"container\">\n" +
-                "        <div class=\"col-lg-3\" style=\"background:#F9F9F9; border-radius:10px;\">\n" +
-                "            <h1 class=\"text-primary\" align=\"center\">Host Game</h1>\n" +
-                "            <div>\n" +
-                "                <form action = \"lobbyHost\" method=\"post\">\n" +
-                "                    Game Name: <br>\n" +
-                "                    <input type = \"text\" name = \"hostName\" id = \"hostName\" class=\"form-control\" required > <br>\n" +
-                "                    <input type = \"submit\" class=\"btn btn-success btn-block\" value=\"Host Game\">\n" +
-                "                </form>\n" +
-                "            </div>\n" +
-                "            <br>\n" +
-                "            <br>\n" +
-                "        </div>\n" +
-                "    </div>\n";
-
-        for (Game game : gamesList) {
-
-            if (game.getHost().compareTo(context.getSession().get("username")) != 0) {
-
-                text += "<br><div class=\"col-lg-6\" style=\"background:#F2F2F2; border-radius:10px;\">";
-
-                text += "<font size=\"4\">" + game.getGameName() + "</font>";
-                text += "<button type=\"button\" class=\"btn btn-success\" style=\"float: right;\"><a style=\"text-decoration:none; color: #FFFFFF;\" href=\"/lobby/" + game.getGameName() + "\">Join</a></button>";
-
-                text += "</div>";
-            }
-        }
-
-        result.render("register", context.getSession().get("username"))
-                .render("availableGames",text);
+        int money = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+        result.render("register", username)
+                .render("money", money)
+                .render("availableGames", gamesList);
         return result;
     }
 
@@ -278,7 +279,10 @@ public class ApplicationController {
         }
 
         Result result = Results.html();
-        result.render("register", context.getSession().get("username"))
+        String username = context.getSession().get("username");
+        int money = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+        result.render("register", username)
+                .render("money", money)
                 .render("tableData",text);
 
 
@@ -328,8 +332,10 @@ public class ApplicationController {
 
 
         if (context.getSession().get("username") != null) {
-
-            result.render("register", context.getSession().get("username"));
+            String username = context.getSession().get("username");
+            int money = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+            result.render("register", username);
+            result.render("money", money);
             pokerService.createDeck();
             result.render("evaluate", pokerService.test());
             result.render("card1", pokerService.getImage(pokerService.getHandList().get(0)));
