@@ -275,11 +275,11 @@ public class PokerService
     }
 
 
-    public String evaluateHands() {
+    public Hand evaluateHands(List<Hand> handsList) {
 
         String[] ranks = {"Straight flush", "Four of a kind", "Full house", "Flush", "Straight", "Three of a kind", "Two Pair", "One Pair", "High card"};
 
-        Hand highestHand = handList.get(0);
+        Hand highestHand = handsList.get(0);
         int indexHigh = 8;
         int index = 8;
 
@@ -289,13 +289,13 @@ public class PokerService
             }
         }
 
-        for (int i=1; i<handList.size();i++) {
+        for (int i=1; i<handsList.size();i++) {
             for (int j=0;j<ranks.length;j++) {
-                if (evaluate(handList.get(i)).compareTo(ranks[j]) == 0) {
+                if (evaluate(handsList.get(i)).compareTo(ranks[j]) == 0) {
                     index = j;
                     if (index < indexHigh) {
                         indexHigh = index;
-                        highestHand = handList.get(i);
+                        highestHand = handsList.get(i);
                     }
                 }
             }
@@ -304,6 +304,6 @@ public class PokerService
 
 
 
-        return highestHand.toString();
+        return highestHand;
     }
 }

@@ -26,6 +26,15 @@ public class userGameService {
 
     }
 
+    @Transactional
+    public boolean userGameUpdate(UserGame Ugame) {
+        EntityManager entityManager = entityManagerProvider.get();
+
+        entityManager.merge(Ugame);
+        return true;
+
+    }
+
     @UnitOfWork
     public List<UserGame> getAllUserGames(){
         EntityManager entityManager = entityManagerProvider.get();

@@ -20,6 +20,7 @@ import Users.Game;
 import Users.User;
 import Users.UserGame;
 import cards.Card;
+import cards.Hand;
 import com.google.inject.Inject;
 import ninja.Result;
 import ninja.Results;
@@ -52,12 +53,10 @@ public class ApplicationController {
 
         List<UserGame> ugl = userGameService.UserGameGet(gameName);
 
-        for (UserGame userGame : ugl) {
-
 
             text += "<table id=\"tableGames\" class=\"table table-striped table-bordered\" cellspacing=\"0\" width=\"100%\">" +
                     "<thead>" +
-                    "<tr><th>" + userGame.getGameName() + "</th></tr>" +
+                    "<tr><th>" + ugl.get(0).getGameName() + "</th></tr>" +
                     "        <tr>" +
                     "        <th>Username</th>" +
                     "        <th>Hand</th>" +
@@ -67,8 +66,14 @@ public class ApplicationController {
 
             List<UserGame> usersInGame = userGameService.UserGameGet(ugl.get(0).getGameName());
 
+
             for (int j = 0; j < usersInGame.size(); j++) {
 
+                pokerService.createDeck();
+
+                usersInGame.get(j).setHand(pokerService.test());
+
+                userGameService.userGameUpdate(usersInGame.get(j));
 
                 String uig = usersInGame.get(j).getHand();
                 uig = uig.replace("(", "");
@@ -88,7 +93,6 @@ public class ApplicationController {
 
             }
             text += "</table>";
-        }
 
         result.render("register", context.getSession().get("username"))
                 .render("result",text);
@@ -122,7 +126,6 @@ public class ApplicationController {
         }
 
         if (gameName != null) {
-            pokerService.createDeck();
 
             List<UserGame> ugl = userGameService.UserGameGameGet(gameName, context.getSession().get("username"));
 
@@ -141,14 +144,14 @@ public class ApplicationController {
 
                 userService.setUsername(user.getUsername());
                 userService.setGameName(service.getGameName());
-                String hand = pokerService.test();
+                String hand = "";
 
                 userService.setHand(hand);
                 user.addGame(service);
                 userService.setU(user);
                 service.addUser(user);
                 userService.setG(service);
-                
+
                 userGameService.userGameStore(userService);
             }
 
@@ -164,6 +167,59 @@ public class ApplicationController {
                 if (UserGame.getUsername().compareTo(UserGame.getG().getHost()) == 0) {
                     text += "<button type=\"button\" class=\"btn btn-success\" style=\"float: right;\"><a style=\"text-decoration:none; color: #FFFFFF;\" href=\"/gameResults/" + UserGame.getGameName() + "\">Start Game</a></button>";
                 }
+
+                text += "</div>";
+            }
+
+            result.render("register", context.getSession().get("username"))
+                    .render("players",text);
+            return result;
+        }
+
+        return result;
+    }
+
+    public Result lobbyJoin(@PathParam("gameName") String gameName, Context context) {
+        Result result = Results.html();
+
+        if (gameName != null) {
+
+            List<UserGame> ugl = userGameService.UserGameGameGet(gameName, context.getSession().get("username"));
+
+            if (ugl.size() == 0) {
+
+
+                List<User> usersList = registerService.userGetUs(context.getSession().get("username"));
+
+                User user = usersList.get(0);
+
+                List<Game> gameList = multiplayerService.gameGet(gameName);
+
+                Game service = gameList.get(0);
+
+                UserGame userService = new UserGame();
+
+                userService.setUsername(user.getUsername());
+                userService.setGameName(service.getGameName());
+                String hand = "";
+
+                userService.setHand(hand);
+                user.addGame(service);
+                userService.setU(user);
+                service.addUser(user);
+                userService.setG(service);
+
+                userGameService.userGameStore(userService);
+            }
+
+            List<UserGame> gamesList = userGameService.UserGameGet(gameName);
+
+            String text = "";
+            for (UserGame UserGame : gamesList) {
+
+                text += "<br><div class=\"col-lg-6\" style=\"background:#F2F2F2; border-radius:10px;\">";
+
+                text += "<font size=\"4\">" + UserGame.getUsername() + "</font>";
 
                 text += "</div>";
             }
@@ -198,14 +254,15 @@ public class ApplicationController {
                 "        </div>\n" +
                 "    </div>\n";
 
+        text += "<h1 class=\"text-primary\" align=\"center\">Available Games to Join</h1>";
+
         for (Game game : gamesList) {
 
             if (game.getHost().compareTo(context.getSession().get("username")) != 0) {
 
                 text += "<br><div class=\"col-lg-6\" style=\"background:#F2F2F2; border-radius:10px;\">";
-
                 text += "<font size=\"4\">" + game.getGameName() + "</font>";
-                text += "<button type=\"button\" class=\"btn btn-success\" style=\"float: right;\"><a style=\"text-decoration:none; color: #FFFFFF;\" href=\"/lobby/" + game.getGameName() + "\">Join</a></button>";
+                text += "<button type=\"button\" class=\"btn btn-success\" style=\"float: right;\"><a style=\"text-decoration:none; color: #FFFFFF;\" href=\"/lobbyJoin/" + game.getGameName() + "\">Join</a></button>";
 
                 text += "</div>";
             }
