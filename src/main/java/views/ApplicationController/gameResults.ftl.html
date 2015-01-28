@@ -27,8 +27,21 @@
 <br><br><br>
 
 <div class="container">
+    <#if (flash.error)??>
+        <div class="alert alert-danger">
+            ${flash.error}
+        </div>
+    </#if>
+    <#if (flash.success)??>
+        <div class="alert alert-success">
+            ${flash.success}
+        </div>
+    </#if>
+</div>
+
+<div class="container">
     <div class="col-lg-6" style="background:#F9F9F9; border-radius:10px;">
-        <h1 class="text-primary" align="center">Available Games to Join</h1>
+        <h1 class="text-primary" align="center">Game Results</h1>
         <div id="hostLobby" style="padding-left:20%;">
             <#noescape>${result}</#noescape>
             <br><br><br>

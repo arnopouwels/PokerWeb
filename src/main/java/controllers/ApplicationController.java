@@ -50,55 +50,75 @@ public class ApplicationController {
     @Inject private Router router;
 
 
-    public Result gameResults(@PathParam("gameName") String gameName, Context context) {
+    public Result gameResults(@PathParam("gameName") String gameName, Context context, FlashScope flashScope) {
         Result result = Results.html();
+
+        List<UserGame> usersInGame = userGameService.UserGameGet(gameName);
+        UserGame userGame = userGameService.UserGameGet(gameName).get(0);
+        Game game = userGame.getG();
+        String userName = context.getSession().get("username");
+
+        // Get winner. For now it rigged to be the host
+        String winner = game.getHost();
+        flashScope.success("Winner is "+winner);
+
+        // Pay out the winner and update database
+        if (game.getActive()) {
+            int numOfPlayers = usersInGame.size();
+            for (int u = 0; u < numOfPlayers; u++) {
+                User player = usersInGame.get(u).getU();
+                int moneyChangeAmount = 0;
+
+                if (player.getUsername().equals(winner)) {
+                    moneyChangeAmount = (numOfPlayers - 1) * game.getCostToPlay();
+                } else {
+                    moneyChangeAmount = - game.getCostToPlay();
+                }
+
+                player.setMoney(player.getMoney() + moneyChangeAmount);
+                userGameService.updateUserInDatabase(player);
+            }
+            game.setActive(false);
+            userGameService.updateGameInDatabase(game);
+        }
 
         String text = "";
 
-        List<UserGame> ugl = userGameService.UserGameGet(gameName);
+        text += "<table id=\"tableGames\" class=\"table table-striped table-bordered\" cellspacing=\"0\" width=\"100%\">" +
+                "<thead>" +
+                "<tr><th>" + userGame.getGameName() + "</th></tr>" +
+                "        <tr>" +
+                "        <th>Username</th>" +
+                "        <th>Hand</th>" +
+                "        <th>Date</th>" +
+                "        </tr>" +
+                "        </thead>";
 
-        for (UserGame userGame : ugl) {
+        for (int j = 0; j < usersInGame.size(); j++) {
 
+            String uig = usersInGame.get(j).getHand();
+            uig = uig.replace("(", "");
+            uig = uig.replace(")", "");
+            String[] arrayOne = uig.split(",");
 
-            text += "<table id=\"tableGames\" class=\"table table-striped table-bordered\" cellspacing=\"0\" width=\"100%\">" +
-                    "<thead>" +
-                    "<tr><th>" + userGame.getGameName() + "</th></tr>" +
-                    "        <tr>" +
-                    "        <th>Username</th>" +
-                    "        <th>Hand</th>" +
-                    "        <th>Date</th>" +
-                    "        </tr>" +
-                    "        </thead>";
+            text += "<tr>";
+            text += "<td>" + usersInGame.get(j).getUsername() + "</td>";
+            text += "<td>" + "<img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[0])) + ".png\" height=\"80\" width=\"50\" id=\"card1\" style=\"position:relative;\" />\n" +
+                    "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[1])) + ".png\" height=\"80\" width=\"50\" id=\"card2\" style=\"position:relative;\" />\n" +
+                    "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[2])) + ".png\" height=\"80\" width=\"50\" id=\"card3\" style=\"position:relative;\" />\n" +
+                    "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[3])) + ".png\" height=\"80\" width=\"50\" id=\"card4\" style=\"position:relative;\" />\n" +
+                    "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[4])) + ".png\" height=\"80\" width=\"50\" id=\"card5\" style=\"position:relative;\" /></td>";
 
-            List<UserGame> usersInGame = userGameService.UserGameGet(ugl.get(0).getGameName());
+            text += "<td>" + usersInGame.get(j).getG().getDateOfGame() + "</td>";
+            text += "</tr>";
 
-            for (int j = 0; j < usersInGame.size(); j++) {
-
-
-                String uig = usersInGame.get(j).getHand();
-                uig = uig.replace("(", "");
-                uig = uig.replace(")", "");
-                String[] arrayOne = uig.split(",");
-
-                text += "<tr>";
-                text += "<td>" + usersInGame.get(j).getUsername() + "</td>";
-                text += "<td>" + "<img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[0])) + ".png\" height=\"80\" width=\"50\" id=\"card1\" style=\"position:relative;\" />\n" +
-                        "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[1])) + ".png\" height=\"80\" width=\"50\" id=\"card2\" style=\"position:relative;\" />\n" +
-                        "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[2])) + ".png\" height=\"80\" width=\"50\" id=\"card3\" style=\"position:relative;\" />\n" +
-                        "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[3])) + ".png\" height=\"80\" width=\"50\" id=\"card4\" style=\"position:relative;\" />\n" +
-                        "        <img src=\"/assets/images/PlayingCards/" + pokerService.getImage(new Card(arrayOne[4])) + ".png\" height=\"80\" width=\"50\" id=\"card5\" style=\"position:relative;\" /></td>";
-
-                text += "<td>" + usersInGame.get(j).getG().getDateOfGame() + "</td>";
-                text += "</tr>";
-
-            }
-            text += "</table>";
         }
+        text += "</table>";
 
         String username = context.getSession().get("username");
-        int money = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+        int playerMoney = registerService.userGetUs(username).stream().findFirst().get().getMoney();
         result.render("register", username)
-                .render("money", money)
+                .render("money", playerMoney)
                 .render("result",text);
 
         return result;
@@ -137,12 +157,15 @@ public class ApplicationController {
         return result;
     }
 
-    public Result lobby(@PathParam("gameName") String gameName, Context context) {
+    public Result lobby(@PathParam("gameName") String gameName, Context context, FlashScope flashScope) {
         Result result = Results.html();
 
         List<Game> gameListExists = multiplayerService.gameGet(gameName);
 
         if (gameName != null) {
+            String username = context.getSession().get("username");
+            int playerMoney = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+
             pokerService.createDeck();
 
             List<UserGame> ugl = userGameService.UserGameGameGet(gameName, context.getSession().get("username"));
@@ -157,6 +180,12 @@ public class ApplicationController {
                 List<Game> gameList = multiplayerService.gameGet(gameName);
 
                 Game service = gameList.get(0);
+
+                if (service.getCostToPlay() > playerMoney) {
+                    flashScope.error("You do not have enough funds to play a game that cost R "
+                                     + service.getCostToPlay());
+                    return result.redirect(router.getReverseRoute(ApplicationController.class, "multiplayer"));
+                }
 
                 UserGame userService = new UserGame();
 
@@ -189,10 +218,9 @@ public class ApplicationController {
                 text += "</div>";
             }
 
-            String username = context.getSession().get("username");
-            int money = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+
             result.render("register", username)
-                    .render("money", money)
+                    .render("money", playerMoney)
                     .render("gameName", gameName)
                     .render("players",text);
             return result;
@@ -210,9 +238,9 @@ public class ApplicationController {
                              .filter(g -> g.getHost().compareTo(username) != 0)
                              .collect(Collectors.toList());
 
-        int money = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+        int playerMoney = registerService.userGetUs(username).stream().findFirst().get().getMoney();
         result.render("register", username)
-                .render("money", money)
+                .render("money", playerMoney)
                 .render("availableGames", gamesList);
         return result;
     }
@@ -280,9 +308,9 @@ public class ApplicationController {
 
         Result result = Results.html();
         String username = context.getSession().get("username");
-        int money = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+        int playerMoney = registerService.userGetUs(username).stream().findFirst().get().getMoney();
         result.render("register", username)
-                .render("money", money)
+                .render("money", playerMoney)
                 .render("tableData",text);
 
 
@@ -333,9 +361,9 @@ public class ApplicationController {
 
         if (context.getSession().get("username") != null) {
             String username = context.getSession().get("username");
-            int money = registerService.userGetUs(username).stream().findFirst().get().getMoney();
+            int playerMoney = registerService.userGetUs(username).stream().findFirst().get().getMoney();
             result.render("register", username);
-            result.render("money", money);
+            result.render("money", playerMoney);
             pokerService.createDeck();
             result.render("evaluate", pokerService.test());
             result.render("card1", pokerService.getImage(pokerService.getHandList().get(0)));
