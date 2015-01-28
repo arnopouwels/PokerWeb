@@ -24,6 +24,8 @@ public class Game {
 
     private String host;
 
+    private int costToPlay;
+
     public void addUser(User _user) {
         UserGame userGame = new UserGame();
         userGame.setUsername(_user.getUsername());
@@ -58,4 +60,8 @@ public class Game {
     public Date getDateOfGame() {return dateOfGame;}
 
     public void setDateOfGame(Date date) { this.dateOfGame = date;}
+
+    public int getCostToPlay() {return costToPlay;}
+
+    public void setCostToPlay(int costToPlayInRands) { this.costToPlay = costToPlayInRands;}
 }

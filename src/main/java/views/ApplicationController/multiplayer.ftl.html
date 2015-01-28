@@ -6,6 +6,7 @@
 
     <link href="/assets/webjars/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/webjars/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/assets/css/custom.css">
 
 </head>
 <body style="background:url(/assets/images/pokerBack.png) no-repeat center center fixed; -webkit-background-size:cover; background-size: cover;">
@@ -19,6 +20,7 @@
             <!-- <a class="navbar-brand" style="position:absolute; width:100%; left:0; text-align:center; margin:auto;">Poker Web Application</a> -->
             <ul class="nav navbar-nav navbar-right">
                 <li><a>${register}</a></li>
+                <li><a>R${money}</a></li>
                 <li class="active"><a href="/logout">Logout</a></li>
             </ul>
         </div>
@@ -26,12 +28,46 @@
     <br><br><br>
 
     <div class="container">
-        <div class="col-lg-6" style="background:#F9F9F9; border-radius:10px;">
-            <h1 class="text-primary" align="center">Available Games to Join</h1>
-            <div style="padding-left:20%;">
-                <#noescape>${availableGames}</#noescape>
-                <br><br><br>
+        <#if (flash.error)??>
+            <div class="alert alert-danger">
+                ${flash.error}
             </div>
+        </#if>
+    </div>
+
+    <div class="container whiteWithCircleBorder">
+        <h1 class="text-primary" align="center">Host Game</h1>
+        <div class="container">
+            <form action = "lobbyHost" method="post">
+                Game Name: <br>
+                <input type = "text" name = "gameName" id = "gameName" class="form-control" required > <br>
+
+                Buy in amount: <br>
+                <input type = "number" name = "buyInAmount" class="form-control"
+                       min="100" max="10000" value="100" required > <br>
+                <input type = "submit" class="btn btn-success btn-block" value="Host Game">
+            </form>
+        </div>
+        <br>
+    </div>
+    <br>
+    <div class="container whiteWithCircleBorder">
+        <h1 class="text-primary" align="center">Available Games to Join</h1>
+        <div class="container">
+            <#list availableGames as game>
+                <br>
+                <div class="col-lg-6" style="background:#F2F2F2; border-radius:10px;">
+
+                    <font size="4">${game.getGameName()} (Buy in: ${game.getCostToPlay()})</font>
+                    <button type="button" class="btn btn-success" style="float: right;">
+                        <a style="text-decoration:none; color: #FFFFFF;" href="/lobby/${game.getGameName()}" >
+                            Join
+                        </a>
+                    </button>
+
+                </div>
+            </#list>
+            <br><br><br>
         </div>
     </div>
 

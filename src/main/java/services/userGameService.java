@@ -1,6 +1,7 @@
 package services;
 
 import Users.Game;
+import Users.User;
 import Users.UserGame;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -24,6 +25,18 @@ public class userGameService {
         entityManager.persist(Ugame);
         return true;
 
+    }
+
+    @Transactional
+    public void updateGameInDatabase(Game game) {
+        EntityManager entityManager = entityManagerProvider.get();
+        entityManager.merge(game);
+    }
+
+    @Transactional
+    public void updateUserInDatabase(User user) {
+        EntityManager entityManager = entityManagerProvider.get();
+        entityManager.merge(user);
     }
 
     @UnitOfWork
